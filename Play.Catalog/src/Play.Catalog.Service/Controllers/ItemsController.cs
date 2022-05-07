@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Play.Catalog.Service.Dtos;
 using System.Linq;
-using Play.Catalog.Service.Repositories;
+using Play.Common;
 using System.Threading.Tasks;
 using Play.Catalog.Service.Entities;
 
@@ -14,8 +14,12 @@ namespace Play.Catalog.Service.Controllers
     public class ItemsController : ControllerBase
     //ConrollerBase provides elements for handling HTTP requests
     {
-        private readonly ItemsRepository itemsRepository = new();
-
+        private readonly IRepository<Item> itemsRepository ;
+        
+        public ItemsController(IRepository<Item> itemsRepository)
+        {
+          this.itemsRepository=itemsRepository;  
+        }
         [HttpGet]
         public async Task<IEnumerable<ItemDto>> GetAsync()
         {

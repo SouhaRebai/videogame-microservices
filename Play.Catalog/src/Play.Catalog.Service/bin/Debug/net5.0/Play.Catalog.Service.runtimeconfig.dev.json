@@ -1,8 +1,8 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "C:\\Users\\soure\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\soure\\.nuget\\packages"
+      "/home/rihem/.dotnet/store/|arch|/|tfm|",
+      "/home/rihem/.nuget/packages"
     ]
   }
 }
