@@ -5,18 +5,17 @@ using MongoDB.Driver;
 using Play.Catalog.Service.Entities;
 namespace Play.Catalog.Service.Repositories
 {
-    public class ItemsRepository
+
+    public class ItemsRepository : IItemsRepository
     {
         private const string collectionName = "items";
         private readonly IMongoCollection<Item> dbCollection;
         //build the filters to query for items in MongoDB
         private readonly FilterDefinitionBuilder<Item> filterBuider = Builders<Item>.Filter;
-        public ItemsRepository()
+        public ItemsRepository(IMongoDatabase database)
         {
             //now we declare the constructor of this repository 
             //we need to start by using a mongo client to connect to the database 
-            var mongoClient = new MongoClient("mongodb://localhost:27017");
-            var database = mongoClient.GetDatabase("Catalog");
             dbCollection = database.GetCollection<Item>(collectionName);
         }
         // return all the items in the database

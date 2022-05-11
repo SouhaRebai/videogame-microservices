@@ -14,7 +14,11 @@ namespace Play.Catalog.Service.Controllers
     public class ItemsController : ControllerBase
     //ConrollerBase provides elements for handling HTTP requests
     {
-        private readonly ItemsRepository itemsRepository = new();
+        private readonly IItemsRepository itemsRepository;
+
+        public ItemsController(IItemsRepository itemsRepository){
+            this.itemsRepository=itemsRepository;
+        }
 
         [HttpGet]
         public async Task<IEnumerable<ItemDto>> GetAsync()
