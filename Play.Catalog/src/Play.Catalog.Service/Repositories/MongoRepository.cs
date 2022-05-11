@@ -6,31 +6,30 @@ using Play.Catalog.Service.Entities;
 namespace Play.Catalog.Service.Repositories
 {
 
-    public class ItemsRepository : IItemsRepository
+    public class MongoRepository<T> : IRepository<T> where T: IEntity
     {
-        private const string collectionName = "items";
-        private readonly IMongoCollection<Item> dbCollection;
+        private readonly IMongoCollection<T> dbCollection;
         //build the filters to query for items in MongoDB
-        private readonly FilterDefinitionBuilder<Item> filterBuider = Builders<Item>.Filter;
-        public ItemsRepository(IMongoDatabase database)
+        private readonly FilterDefinitionBuilder<T> filterBuider = Builders<T>.Filter;
+        public MongoRepository(IMongoDatabase database, string collectionName)
         {
             //now we declare the constructor of this repository 
             //we need to start by using a mongo client to connect to the database 
-            dbCollection = database.GetCollection<Item>(collectionName);
+            dbCollection = database.GetCollection<T>(collectionName);
         }
         // return all the items in the database
-        public async Task<IReadOnlyCollection<Item>> GetAllAsync()
+        public async Task<IReadOnlyCollection<T>> GetAllAsync()
         {
             return await dbCollection.Find(filterBuider.Empty).ToListAsync();
         }
         // return a searched item
-        public async Task<Item> GetAsync(Guid id)
+        public async Task<T> GetAsync(Guid id)
         {
-            FilterDefinition<Item> filter = filterBuider.Eq(entity => entity.Id, id);
+            FilterDefinition<T> filter = filterBuider.Eq(entity => entity.Id, id);
             return await dbCollection.Find(filter).FirstOrDefaultAsync();
         }
         // create an item in the database
-        public async Task CreateAsync(Item entity)
+        public async Task CreateAsync(T entity)
         {
             if (entity == null)
             {
@@ -39,19 +38,19 @@ namespace Play.Catalog.Service.Repositories
             await dbCollection.InsertOneAsync(entity);
         }
         //update an existing item in the database 
-        public async Task UpdateAsync(Item entity)
+        public async Task UpdateAsync(T entity)
         {
             if (entity == null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-            FilterDefinition<Item> filter = filterBuider.Eq(existingEntity => existingEntity.Id, entity.Id);
+            FilterDefinition<T> filter = filterBuider.Eq(existingEntity => existingEntity.Id, entity.Id);
             await dbCollection.ReplaceOneAsync(filter, entity);
         }
         //delete from database
-        public async Task DeleteAsync(Item entity)
+        public async Task DeleteAsync(T entity)
         {
-            FilterDefinition<Item> filter = filterBuider.Eq(existingEntity => existingEntity.Id, entity.Id);
+            FilterDefinition<T> filter = filterBuider.Eq(existingEntity => existingEntity.Id, entity.Id);
             await dbCollection.DeleteOneAsync(filter);
         }
     }

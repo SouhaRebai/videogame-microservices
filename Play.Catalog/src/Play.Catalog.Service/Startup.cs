@@ -17,6 +17,7 @@ using MongoDB.Bson;
 using Play.Catalog.Service.Settings;
 using MongoDB.Driver;
 using Play.Catalog.Service.Repositories;
+using Play.Catalog.Service.Entities;
 
 namespace Play.Catalog.Service
 {
@@ -47,7 +48,10 @@ namespace Play.Catalog.Service
                 return mongoClient.GetDatabase(serviceSettings.ServiceName);
             });
 
-            services.AddSingleton<IItemsRepository, ItemsRepository>();
+            services.AddSingleton<IRepository<Item>>(servicerProvider =>{
+                var database = servicerProvider.GetService<IMongoDatabase>();
+                return new MongoRepository<Item>(database,"items");
+            });
 
             services.AddControllers(options =>
             {
